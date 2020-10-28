@@ -1,0 +1,20 @@
+{
+  "title": "Send email endpoint schema",
+  "type": "object",
+  "properties": {
+    "sendTo": {
+      "type": "string",
+      "description": "Send mail to",
+      "format": "idn-email"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message to sent"
+    },
+    "whenToBeSent": {
+      "type": "string",
+      "description": "When to be sent mail",
+      "format": "date-time"
+    }
+  }
+}
