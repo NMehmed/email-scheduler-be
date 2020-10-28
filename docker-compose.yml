@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    expose:
+      - 27017
+    networks:
+      - app
+  rabbitmq:
+    image: rabbitmq:3.8.9
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge

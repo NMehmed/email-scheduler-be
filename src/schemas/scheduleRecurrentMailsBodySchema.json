@@ -1,11 +1,11 @@
 {
-  "title": "Send email endpoint schema",
+  "title": "Schedule recurrent emails body schema",
   "type": "object",
   "properties": {
     "sendTo": {
       "type": "string",
       "description": "Send mail to",
-      "format": "idn-email"
+      "format": "email"
     },
     "message": {
       "type": "string",

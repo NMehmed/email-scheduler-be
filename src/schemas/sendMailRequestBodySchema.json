@@ -1,0 +1,25 @@
+{
+  "title": "Send email body schema",
+  "type": "object",
+  "properties": {
+    "emailTo": {
+      "type": "string",
+      "description": "Send mail to",
+      "format": "email"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message to sent"
+    },
+    "whenToBeSent": {
+      "type": "string",
+      "description": "When to be sent mail",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "emailTo",
+    "message",
+    "whenToBeSent"
+  ]
+}
