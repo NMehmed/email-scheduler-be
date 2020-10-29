@@ -11,6 +11,10 @@ services:
       - app
   rabbitmq:
     image: rabbitmq:3.8.9
+    ports:
+      - "5672:5672"
+    expose:
+      - 5672
     networks:
       - app
 

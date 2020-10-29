@@ -11,6 +11,10 @@ export interface SendEmailBodySchema {
    */
   emailTo: string;
   /**
+   * Mail subject
+   */
+  subject: string;
+  /**
    * Message to sent
    */
   message: string;

@@ -4,6 +4,13 @@ import path from 'path'
 
 const server = fastify()
 const routes = Object.values(requireAll({ dirname: path.join(__dirname, 'routes') }))
+import BrokerService from './services/brokerService'
+
+const brokerService = new BrokerService()
+if (process.env.MESSAGE_QUEUE && process.env.QUEUE_NAME) {
+  brokerService.start(process.env.MESSAGE_QUEUE, process.env.QUEUE_NAME)
+  console.log('broker starts')
+}
 
 server.register(require('fastify-cors'))
 

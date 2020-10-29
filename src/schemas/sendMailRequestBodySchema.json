@@ -7,6 +7,10 @@
       "description": "Send mail to",
       "format": "email"
     },
+    "subject": {
+      "type": "string",
+      "description": "Mail subject"
+    },
     "message": {
       "type": "string",
       "description": "Message to sent"
@@ -19,6 +23,7 @@
   },
   "required": [
     "emailTo",
+    "subject",
     "message",
     "whenToBeSent"
   ]
