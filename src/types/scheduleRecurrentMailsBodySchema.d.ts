@@ -9,14 +9,31 @@ export interface ScheduleRecurrentEmailsBodySchema {
   /**
    * Send mail to
    */
-  sendTo?: string;
+  emailTo: string;
+  /**
+   * Mail subject
+   */
+  subject: string;
   /**
    * Message to sent
    */
-  message?: string;
-  /**
-   * When to be sent mail
-   */
-  whenToBeSent?: string;
+  message: string;
+  dayOfMonth?: number;
+  weekdays?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
+  whenToStopMails: {
+    /**
+     * When to stop sending those recurrent mails
+     */
+    whenToStop: "never" | "onDate" | "afterSomeOccurency";
+    /**
+     * Date on which to stop sending mails
+     */
+    stopDate?: string;
+    /**
+     * After those number of sent mails to stop sending
+     */
+    occurrancy?: number;
+    [k: string]: unknown;
+  };
   [k: string]: unknown;
 }

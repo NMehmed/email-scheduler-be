@@ -2,19 +2,71 @@
   "title": "Schedule recurrent emails body schema",
   "type": "object",
   "properties": {
-    "sendTo": {
+    "emailTo": {
       "type": "string",
       "description": "Send mail to",
       "format": "email"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Mail subject"
     },
     "message": {
       "type": "string",
       "description": "Message to sent"
     },
-    "whenToBeSent": {
-      "type": "string",
-      "description": "When to be sent mail",
-      "format": "date-time"
+    "dayOfMonth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 31
+    },
+    "weekdays": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ]
+      }
+    },
+    "whenToStopMails": {
+      "type": "object",
+      "properties": {
+        "whenToStop": {
+          "type": "string",
+          "description": "When to stop sending those recurrent mails",
+          "enum": [
+            "never",
+            "onDate",
+            "afterSomeOccurency"
+          ]
+        },
+        "stopDate": {
+          "type": "string",
+          "description": "Date on which to stop sending mails",
+          "format": "date-time"
+        },
+        "occurrancy": {
+          "type": "integer",
+          "description": "After those number of sent mails to stop sending",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "whenToStop"
+      ]
     }
-  }
+  },
+  "required": [
+    "emailTo",
+    "subject",
+    "message",
+    "whenToStopMails"
+  ]
 }
