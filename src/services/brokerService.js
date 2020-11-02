@@ -23,6 +23,9 @@ class BrokerService {
             throw Error('Not initialised run start before sending message');
         if (!this.queueName)
             throw Error('Not initialised run start before sending message');
+        if (this.messageQueue && this.queueName && !this.connection) {
+            await this.start(this.messageQueue, this.queueName);
+        }
         await this.channel.sendToQueue(this.queueName, Buffer.from(JSON.stringify(message)), {
             contentType: 'application/json',
             persistent: true

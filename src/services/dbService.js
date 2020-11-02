@@ -1,19 +1,19 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongodb_1 = __importDefault(require("mongodb"));
-const MongoClient = mongodb_1.default.MongoClient;
-const url = 'mongodb://localhost:27017/';
+const mongodb_1 = require("mongodb");
 let emailsScheduleCollection;
-MongoClient.connect(url, function (err, db) {
-    if (err)
-        throw err;
-    emailsScheduleCollection = db.db('emails').collection('schedule');
-    console.log('MONGO CONNECTED');
-});
 const dbService = {
+    start: (mongoUrl) => {
+        return new Promise((resolve, reject) => {
+            mongodb_1.MongoClient.connect(mongoUrl, function (err, db) {
+                if (err)
+                    reject(err);
+                emailsScheduleCollection = db.db('emails').collection('schedule');
+                console.log('MONGO CONNECTED');
+                resolve(true);
+            });
+        });
+    },
     addEmailSchedule: (emailSchedule) => {
         return new Promise((res, rej) => {
             if (emailsScheduleCollection)
@@ -29,16 +29,16 @@ const dbService = {
             emailsScheduleCollection.find({
                 $or: [
                     {
-                        "whenToStopMails.whenToStop": { $eq: "never" }
+                        'whenToStopMails.whenToStop': { $eq: 'never' }
                     },
                     {
                         $and: [
                             {
-                                "whenToStopMails.whenToStop": { $eq: "afterSomeOccurency" }
+                                'whenToStopMails.whenToStop': { $eq: 'afterSomeOccurency' }
                             },
                             {
                                 $expr: {
-                                    $lt: ["$occurrancy", "$whenToStopMails.occurrancy"]
+                                    $lt: ['$occurrancy', '$whenToStopMails.occurrancy']
                                 }
                             }
                         ]
@@ -46,10 +46,10 @@ const dbService = {
                     {
                         $and: [
                             {
-                                "whenToStopMails.whenToStop": { $eq: "onDate" }
+                                'whenToStopMails.whenToStop': { $eq: 'onDate' }
                             },
                             {
-                                "whenToStopMails.stopDate": { $gt: new Date().toISOString() }
+                                'whenToStopMails.stopDate': { $gt: new Date().toISOString() }
                             }
                         ]
                     }
@@ -58,6 +58,21 @@ const dbService = {
                 if (err)
                     return rej(err);
                 return res(result);
+            });
+        });
+    },
+    increaseOccurrancy: (_id) => {
+        return new Promise((res, rej) => {
+            emailsScheduleCollection.updateOne({
+                _id
+            }, {
+                $inc: {
+                    occurrancy: 1
+                }
+            }, (err, response) => {
+                if (err)
+                    return rej(err);
+                return res(response);
             });
         });
     }

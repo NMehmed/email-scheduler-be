@@ -1,18 +1,22 @@
-import mongodb, { MongoError } from 'mongodb'
+import { MongoClient, MongoError } from 'mongodb'
 import { ScheduleRecurrentEmailsBodySchema } from '../types/scheduleRecurrentMailsBodySchema'
+import { MailSchedule } from '../types/mailSchedule'
 
-const MongoClient = mongodb.MongoClient
-const url = 'mongodb://localhost:27017/'
 let emailsScheduleCollection: any
 
-MongoClient.connect(url, function (err, db) {
-  if (err) throw err
-
-  emailsScheduleCollection = db.db('emails').collection('schedule')
-  console.log('MONGO CONNECTED')
-})
-
 const dbService = {
+  start: (mongoUrl: string) => {
+    return new Promise((resolve, reject) => {
+      MongoClient.connect(mongoUrl, function (err, db) {
+        if (err) reject(err)
+
+        emailsScheduleCollection = db.db('emails').collection('schedule')
+        console.log('MONGO CONNECTED')
+        resolve(true)
+      })
+    })
+  },
+
   addEmailSchedule: (emailSchedule: ScheduleRecurrentEmailsBodySchema) => {
     return new Promise((res, rej) => {
       if (emailsScheduleCollection) emailsScheduleCollection.insertOne({ ...emailSchedule, occurrancy: 0 }, (err: MongoError, response: any) => {
@@ -23,21 +27,21 @@ const dbService = {
     })
   },
 
-  getActiveEmailSchedules: () => {
+  getActiveEmailSchedules: (): Promise<Array<MailSchedule>> => {
     return new Promise((res, rej) => {
       emailsScheduleCollection.find({
         $or: [
           {
-            "whenToStopMails.whenToStop": { $eq: "never" }
+            'whenToStopMails.whenToStop': { $eq: 'never' }
           },
           {
             $and: [
               {
-                "whenToStopMails.whenToStop": { $eq: "afterSomeOccurency" }
+                'whenToStopMails.whenToStop': { $eq: 'afterSomeOccurency' }
               },
               {
                 $expr: {
-                  $lt: ["$occurrancy", "$whenToStopMails.occurrancy"]
+                  $lt: ['$occurrancy', '$whenToStopMails.occurrancy']
                 }
               }
             ]
@@ -45,10 +49,10 @@ const dbService = {
           {
             $and: [
               {
-                "whenToStopMails.whenToStop": { $eq: "onDate" }
+                'whenToStopMails.whenToStop': { $eq: 'onDate' }
               },
               {
-                "whenToStopMails.stopDate": { $gt: new Date().toISOString() }
+                'whenToStopMails.stopDate': { $gt: new Date().toISOString() }
               }
             ]
           }
@@ -57,6 +61,22 @@ const dbService = {
         if (err) return rej(err)
 
         return res(result)
+      })
+    })
+  },
+
+  increaseOccurrancy: (_id: string) => {
+    return new Promise((res, rej) => {
+      emailsScheduleCollection.updateOne({
+        _id
+      }, {
+        $inc: {
+          occurrancy: 1
+        }
+      }, (err: Error, response: any) => {
+        if (err) return rej(err)
+
+        return res(response)
       })
     })
   }

@@ -10,8 +10,8 @@ async function default_1(request, reply) {
         return { awesome: true };
     }
     catch (error) {
-        console.log(error);
-        return { awesome: false };
+        console.error(error);
+        return { awesome: false, error };
     }
 }
 exports.default = default_1;

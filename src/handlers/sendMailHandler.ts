@@ -12,8 +12,8 @@ export default async function (request: SendMailRequest, reply: FastifyReply) {
 
     return { awesome: true }
   } catch (error) {
-    console.log(error)
+    console.error(error)
 
-    return { awesome: false }
+    return { awesome: false, error }
   }
 }

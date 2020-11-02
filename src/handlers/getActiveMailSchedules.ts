@@ -7,8 +7,8 @@ export default async function (request: FastifyRequest, reply: FastifyReply) {
 
     return { activeSchedules }
   } catch (error) {
-    console.log(error)
+    console.error(error)
 
-    return { awesome: false }
+    return { awesome: false, error }
   }
 }
