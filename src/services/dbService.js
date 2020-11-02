@@ -7,10 +7,10 @@ const dbService = {
         return new Promise((resolve, reject) => {
             mongodb_1.MongoClient.connect(mongoUrl, function (err, db) {
                 if (err)
-                    reject(err);
+                    return reject(err);
                 emailsScheduleCollection = db.db('emails').collection('schedule');
                 console.log('MONGO CONNECTED');
-                resolve(true);
+                return resolve(true);
             });
         });
     },

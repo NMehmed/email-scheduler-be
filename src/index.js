@@ -15,9 +15,9 @@ if (process.env.MESSAGE_QUEUE
     && process.env.MONGODB_URL) {
     Promise.all([
         // TODO: move to DI
-        () => brokerService.start(process.env.MESSAGE_QUEUE, process.env.QUEUE_NAME),
-        () => dbService_1.default.start(process.env.MONGODB_URL)
-    ]).then(async () => {
+        dbService_1.default.start(process.env.MONGODB_URL),
+        brokerService.start(process.env.MESSAGE_QUEUE, process.env.QUEUE_NAME)
+    ]).then(() => {
         const server = fastify_1.default();
         const routes = Object.values(require_all_1.default({ dirname: path_1.default.join(__dirname, 'routes') }));
         server.register(require('fastify-cors'));

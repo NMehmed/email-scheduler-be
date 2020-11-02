@@ -12,9 +12,9 @@ if (process.env.MESSAGE_QUEUE
   && process.env.MONGODB_URL) {
   Promise.all([
     // TODO: move to DI
-    () => brokerService.start(process.env.MESSAGE_QUEUE as string, process.env.QUEUE_NAME as string),
-    () => dbService.start(process.env.MONGODB_URL as string)
-  ]).then(async () => {
+    dbService.start(process.env.MONGODB_URL as string),
+    brokerService.start(process.env.MESSAGE_QUEUE as string, process.env.QUEUE_NAME as string)
+  ]).then(() => {
     const server = fastify()
     const routes = Object.values(requireAll({ dirname: path.join(__dirname, 'routes') }))
 
