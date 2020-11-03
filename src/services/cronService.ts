@@ -37,7 +37,7 @@ const initMailCronJob = async (mailSchedule: IMailSchedule) => {
     } catch (error) {
       console.log(error)
     }
-  })
+  }, null, undefined, undefined, undefined, undefined, 0)
 
   cronJob.start()
 

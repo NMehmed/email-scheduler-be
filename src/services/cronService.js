@@ -33,7 +33,7 @@ const initMailCronJob = async (mailSchedule) => {
         catch (error) {
             console.log(error);
         }
-    });
+    }, null, undefined, undefined, undefined, undefined, 0);
     cronJob.start();
     cronJobs[mailSchedule.id] = cronJob;
 };
