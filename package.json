@@ -21,6 +21,7 @@
     "dotenv": "^8.2.0",
     "fastify": "^3.7.0",
     "fastify-cors": "^4.1.0",
+    "is-docker": "^2.1.1",
     "mongodb": "^3.6.2",
     "require-all": "^3.0.0"
   },

@@ -4,6 +4,8 @@ import path from 'path'
 import BrokerService from './services/brokerService'
 import dbService from './services/dbService'
 import cronService from './services/cronService'
+import isDocker from 'is-docker'
+const listenAddressDocker = '0.0.0.0'
 
 const brokerService = new BrokerService()
 
@@ -30,13 +32,23 @@ if (process.env.MESSAGE_QUEUE
       console.error(error)
     }
 
-    server.listen(8080, (err, address) => {
-      if (err) {
-        console.error(err)
-        process.exit(1)
-      }
-      console.log(`Server listening at ${address}`)
-    })
+    if (isDocker()) {
+      server.listen(8080, listenAddressDocker, (err, address) => {
+        if (err) {
+          console.error(err)
+          process.exit(1)
+        }
+        console.log(`Server listening at ${address}`)
+      })
+    } else {
+      server.listen(8080, (err, address) => {
+        if (err) {
+          console.error(err)
+          process.exit(1)
+        }
+        console.log(`Server listening at ${address}`)
+      })
+    }
   })
 } else {
   console.error('Set env variables before start')
