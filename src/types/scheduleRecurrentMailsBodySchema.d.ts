@@ -18,6 +18,10 @@ export interface ScheduleRecurrentEmailsBodySchema {
    * Message to sent
    */
   message: string;
+  /**
+   * Time of the day when to send the mail in format HH:mm
+   */
+  tickTime: string;
   dayOfMonth?: number;
   weekdays?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
   whenToStopMails: {

@@ -2,6 +2,7 @@ export interface MailSchedule {
   emailTo: string;
   subject: string;
   message: string;
+  tickTime: string;
   dayOfMonth?: number;
   weekdays?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
   whenToStopMails: {

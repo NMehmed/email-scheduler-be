@@ -9,6 +9,8 @@ const path_1 = __importDefault(require("path"));
 const brokerService_1 = __importDefault(require("./services/brokerService"));
 const dbService_1 = __importDefault(require("./services/dbService"));
 const cronService_1 = __importDefault(require("./services/cronService"));
+const is_docker_1 = __importDefault(require("is-docker"));
+const listenAddressDocker = '0.0.0.0';
 const brokerService = new brokerService_1.default();
 if (process.env.MESSAGE_QUEUE
     && process.env.QUEUE_NAME
@@ -31,13 +33,24 @@ if (process.env.MESSAGE_QUEUE
             console.error('Failed to lunch cron jobs');
             console.error(error);
         }
-        server.listen(8080, (err, address) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-            console.log(`Server listening at ${address}`);
-        });
+        if (is_docker_1.default()) {
+            server.listen(8080, listenAddressDocker, (err, address) => {
+                if (err) {
+                    console.error(err);
+                    process.exit(1);
+                }
+                console.log(`Server listening at ${address}`);
+            });
+        }
+        else {
+            server.listen(8080, (err, address) => {
+                if (err) {
+                    console.error(err);
+                    process.exit(1);
+                }
+                console.log(`Server listening at ${address}`);
+            });
+        }
     });
 }
 else {

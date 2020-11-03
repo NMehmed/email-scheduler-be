@@ -6,13 +6,14 @@ import { MailSchedule } from '../types/mailSchedule'
 import { SendEmailBodySchema } from '../types/sendMailRequestBodySchema'
 
 const cronJobs: { [key: string]: CronJob } = {}
-const toCronPattern = ({ weekdays, dayOfMonth }: any) => {
-  const daysInWeek = weekdays.length > 0 ?
+const toCronPattern = ({ weekdays, dayOfMonth, tickTime }: any) => {
+  const daysInWeek = weekdays && weekdays.length > 0 ?
     weekdays.map((day: any) => { return Weekdays[day] }).join(',')
     : '*'
   const dayInMonth = dayOfMonth > 0 ? dayOfMonth : '*'
+  const [hour, minutes] = tickTime ? tickTime.split(':') : ['10', '0']
 
-  return `0 10 ${dayInMonth} * ${daysInWeek}`
+  return `${minutes} ${hour} ${dayInMonth} * ${daysInWeek}`
 }
 const initMailCronJob = async (mailSchedule: MailSchedule) => {
   const cronPattern = toCronPattern(mailSchedule)

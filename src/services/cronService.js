@@ -8,12 +8,13 @@ const dbService_1 = __importDefault(require("./dbService"));
 const mailService_1 = __importDefault(require("./mailService"));
 const weekdays_1 = __importDefault(require("../enums/weekdays"));
 const cronJobs = {};
-const toCronPattern = ({ weekdays, dayOfMonth }) => {
-    const daysInWeek = weekdays.length > 0 ?
+const toCronPattern = ({ weekdays, dayOfMonth, tickTime }) => {
+    const daysInWeek = weekdays && weekdays.length > 0 ?
         weekdays.map((day) => { return weekdays_1.default[day]; }).join(',')
         : '*';
     const dayInMonth = dayOfMonth > 0 ? dayOfMonth : '*';
-    return `0 10 ${dayInMonth} * ${daysInWeek}`;
+    const [hour, minutes] = tickTime ? tickTime.split(':') : ['10', '0'];
+    return `${minutes} ${hour} ${dayInMonth} * ${daysInWeek}`;
 };
 const initMailCronJob = async (mailSchedule) => {
     const cronPattern = toCronPattern(mailSchedule);
