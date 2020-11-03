@@ -1,4 +1,6 @@
-export interface MailSchedule {
+import { ObjectID } from "mongodb";
+
+export interface IMailSchedule {
   emailTo: string;
   subject: string;
   message: string;
@@ -12,5 +14,6 @@ export interface MailSchedule {
     occurrancy?: number;
   };
   occurrancy: number;
-  _id: string;
+  _id: ObjectID;
+  id: string;
 }

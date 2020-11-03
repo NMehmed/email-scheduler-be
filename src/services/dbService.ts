@@ -1,6 +1,6 @@
-import { MongoClient, MongoError } from 'mongodb'
+import { MongoClient, MongoError, ObjectID } from 'mongodb'
 import { ScheduleRecurrentEmailsBodySchema } from '../types/scheduleRecurrentMailsBodySchema'
-import { MailSchedule } from '../types/mailSchedule'
+import { IMailSchedule } from '../types/IMailSchedule'
 
 let emailsScheduleCollection: any
 
@@ -28,7 +28,7 @@ const dbService = {
     })
   },
 
-  getActiveEmailSchedules: (): Promise<Array<MailSchedule>> => {
+  getActiveEmailSchedules: (): Promise<Array<IMailSchedule>> => {
     return new Promise((res, rej) => {
       emailsScheduleCollection.find({
         $or: [
@@ -61,12 +61,17 @@ const dbService = {
       }).toArray((err: any, result: any) => {
         if (err) return rej(err)
 
-        return res(result)
+        const normalizedArr = result.map((m: any) => ({
+          ...m,
+          id: m._id.toString(),
+        }))
+
+        return res(normalizedArr)
       })
     })
   },
 
-  increaseOccurrancy: (_id: string) => {
+  increaseOccurrancy: (_id: ObjectID) => {
     return new Promise((res, rej) => {
       emailsScheduleCollection.updateOne({
         _id

@@ -57,11 +57,17 @@ const dbService = {
             }).toArray((err, result) => {
                 if (err)
                     return rej(err);
-                return res(result);
+                const normalizedArr = result.map((m) => ({
+                    ...m,
+                    id: m._id.toString(),
+                }));
+                return res(normalizedArr);
             });
         });
     },
     increaseOccurrancy: (_id) => {
+        console.log('HIT-INC');
+        console.log(_id);
         return new Promise((res, rej) => {
             emailsScheduleCollection.updateOne({
                 _id
@@ -70,8 +76,10 @@ const dbService = {
                     occurrancy: 1
                 }
             }, (err, response) => {
+                console.log(err);
                 if (err)
                     return rej(err);
+                console.log(response);
                 return res(response);
             });
         });

@@ -12,13 +12,16 @@ const toCronPattern = ({ weekdays, dayOfMonth, tickTime }) => {
     const daysInWeek = weekdays && weekdays.length > 0 ?
         weekdays.map((day) => { return weekdays_1.default[day]; }).join(',')
         : '*';
-    const dayInMonth = dayOfMonth > 0 ? dayOfMonth : '*';
+    const dayInMonth = dayOfMonth || '*';
     const [hour, minutes] = tickTime ? tickTime.split(':') : ['10', '0'];
     return `${minutes} ${hour} ${dayInMonth} * ${daysInWeek}`;
 };
 const initMailCronJob = async (mailSchedule) => {
     const cronPattern = toCronPattern(mailSchedule);
+    console.log('cron pattern');
+    console.log(cronPattern);
     const cronJob = new cron_1.CronJob(cronPattern, async () => {
+        console.log('HIT');
         try {
             const mail = {
                 emailTo: mailSchedule.emailTo,
@@ -27,12 +30,6 @@ const initMailCronJob = async (mailSchedule) => {
                 whenToBeSent: new Date().toISOString(),
             };
             await mailService_1.default.send(mail);
-        }
-        catch (error) {
-            console.log(error);
-        }
-    }, async () => {
-        try {
             await dbService_1.default.increaseOccurrancy(mailSchedule._id);
             await cronService.clearMailCronJobs();
         }
@@ -41,7 +38,9 @@ const initMailCronJob = async (mailSchedule) => {
         }
     });
     cronJob.start();
-    cronJobs[mailSchedule._id] = cronJob;
+    console.log(cronJob.nextDate());
+    console.log('-----');
+    cronJobs[mailSchedule.id] = cronJob;
 };
 const cronService = {
     startMailCronJobs: async () => {
@@ -51,15 +50,20 @@ const cronService = {
     startNewMailCronJobs: async () => {
         const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
         const IdsOfRunningMailSchedules = Object.keys(cronJobs);
+        console.log('new crons');
+        console.log(activeEmailSchedules);
+        console.log('----');
+        console.log(IdsOfRunningMailSchedules);
         activeEmailSchedules
-            .filter(emailSchedule => !IdsOfRunningMailSchedules.some(id => id === emailSchedule._id))
+            .filter(emailSchedule => !IdsOfRunningMailSchedules.some(id => id === emailSchedule.id))
             .forEach(initMailCronJob);
     },
     clearMailCronJobs: async () => {
+        console.log('clear');
         const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
         const IdsOfRunningMailSchedules = Object.keys(cronJobs);
         IdsOfRunningMailSchedules
-            .filter(cronId => !activeEmailSchedules.some(emailSchedule => emailSchedule._id === cronId))
+            .filter(cronId => !activeEmailSchedules.some(emailSchedule => emailSchedule.id === cronId))
             .forEach(expiredCronId => cronJobs[expiredCronId].stop());
     }
 };

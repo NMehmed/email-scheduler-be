@@ -2,20 +2,22 @@ import { CronJob } from 'cron'
 import dbService from './dbService'
 import mailService from './mailService'
 import Weekdays from '../enums/weekdays'
-import { MailSchedule } from '../types/mailSchedule'
+import { IMailSchedule } from '../types/IMailSchedule'
 import { SendEmailBodySchema } from '../types/sendMailRequestBodySchema'
 
 const cronJobs: { [key: string]: CronJob } = {}
-const toCronPattern = ({ weekdays, dayOfMonth, tickTime }: any) => {
+
+const toCronPattern = ({ weekdays, dayOfMonth, tickTime }: IMailSchedule) => {
   const daysInWeek = weekdays && weekdays.length > 0 ?
     weekdays.map((day: any) => { return Weekdays[day] }).join(',')
     : '*'
-  const dayInMonth = dayOfMonth > 0 ? dayOfMonth : '*'
+  const dayInMonth = dayOfMonth || '*'
   const [hour, minutes] = tickTime ? tickTime.split(':') : ['10', '0']
 
   return `${minutes} ${hour} ${dayInMonth} * ${daysInWeek}`
 }
-const initMailCronJob = async (mailSchedule: MailSchedule) => {
+
+const initMailCronJob = async (mailSchedule: IMailSchedule) => {
   const cronPattern = toCronPattern(mailSchedule)
 
   const cronJob = new CronJob(cronPattern, async () => {
@@ -28,11 +30,7 @@ const initMailCronJob = async (mailSchedule: MailSchedule) => {
       } as SendEmailBodySchema
 
       await mailService.send(mail)
-    } catch (error) {
-      console.log(error)
-    }
-  }, async () => {
-    try {
+
       await dbService.increaseOccurrancy(mailSchedule._id)
 
       await cronService.clearMailCronJobs()
@@ -43,7 +41,7 @@ const initMailCronJob = async (mailSchedule: MailSchedule) => {
 
   cronJob.start()
 
-  cronJobs[mailSchedule._id] = cronJob
+  cronJobs[mailSchedule.id] = cronJob
 }
 
 const cronService = {
@@ -59,7 +57,7 @@ const cronService = {
 
     activeEmailSchedules
       .filter(emailSchedule =>
-        !IdsOfRunningMailSchedules.some(id => id === emailSchedule._id))
+        !IdsOfRunningMailSchedules.some(id => id === emailSchedule.id))
       .forEach(initMailCronJob)
   },
 
@@ -69,7 +67,7 @@ const cronService = {
 
     IdsOfRunningMailSchedules
       .filter(cronId =>
-        !activeEmailSchedules.some(emailSchedule => emailSchedule._id === cronId))
+        !activeEmailSchedules.some(emailSchedule => emailSchedule.id === cronId))
       .forEach(expiredCronId =>
         cronJobs[expiredCronId].stop())
   }
