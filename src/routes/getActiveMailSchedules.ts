@@ -1,4 +1,4 @@
-import handler from '../handlers/getActiveMailSchedules'
+import handler from '../handlers/getActiveMailSchedulesHandler'
 
 module.exports = {
   method: 'GET',

@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cron_1 = require("cron");
 const dbService_1 = __importDefault(require("./dbService"));
 const mailService_1 = __importDefault(require("./mailService"));
-const weekdays_1 = __importDefault(require("../enums/weekdays"));
+const Weekdays_1 = __importDefault(require("../enums/Weekdays"));
 const cronJobs = {};
 const toCronPattern = ({ weekdays, dayOfMonth, tickTime }) => {
     const daysInWeek = weekdays && weekdays.length > 0 ?
-        weekdays.map((day) => { return weekdays_1.default[day]; }).join(',')
+        weekdays.map((day) => { return Weekdays_1.default[day]; }).join(',')
         : '*';
     const dayInMonth = dayOfMonth || '*';
     const [hour, minutes] = tickTime ? tickTime.split(':') : ['10', '0'];

@@ -9,7 +9,6 @@ export interface IMailSchedule {
   weekdays?: ("Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday")[];
   whenToStopMails: {
     whenToStop: "never" | "onDate" | "afterSomeOccurency";
-
     stopDate?: string;
     occurrancy?: number;
   };
