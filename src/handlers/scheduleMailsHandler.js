@@ -13,7 +13,7 @@ async function default_1(request, reply) {
     }
     catch (error) {
         console.log(error);
-        return { awesome: false, message: error };
+        return { awesome: false, error };
     }
 }
 exports.default = default_1;

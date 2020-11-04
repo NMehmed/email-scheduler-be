@@ -39,22 +39,37 @@ const initMailCronJob = async (mailSchedule) => {
 };
 const cronService = {
     startMailCronJobs: async () => {
-        const mailScedules = await dbService_1.default.getActiveEmailSchedules();
-        mailScedules.forEach(initMailCronJob);
+        try {
+            const mailScedules = await dbService_1.default.getActiveEmailSchedules();
+            mailScedules.forEach(initMailCronJob);
+        }
+        catch (error) {
+            console.error(error);
+        }
     },
     startNewMailCronJobs: async () => {
-        const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
-        const IdsOfRunningMailSchedules = Object.keys(cronJobs);
-        activeEmailSchedules
-            .filter(emailSchedule => !IdsOfRunningMailSchedules.some(id => id === emailSchedule.id))
-            .forEach(initMailCronJob);
+        try {
+            const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
+            const IdsOfRunningMailSchedules = Object.keys(cronJobs);
+            activeEmailSchedules
+                .filter(emailSchedule => !IdsOfRunningMailSchedules.some(id => id === emailSchedule.id))
+                .forEach(initMailCronJob);
+        }
+        catch (error) {
+            console.error(error);
+        }
     },
     clearMailCronJobs: async () => {
-        const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
-        const IdsOfRunningMailSchedules = Object.keys(cronJobs);
-        IdsOfRunningMailSchedules
-            .filter(cronId => !activeEmailSchedules.some(emailSchedule => emailSchedule.id === cronId))
-            .forEach(expiredCronId => cronJobs[expiredCronId].stop());
+        try {
+            const activeEmailSchedules = await dbService_1.default.getActiveEmailSchedules();
+            const IdsOfRunningMailSchedules = Object.keys(cronJobs);
+            IdsOfRunningMailSchedules
+                .filter(cronId => !activeEmailSchedules.some(emailSchedule => emailSchedule.id === cronId))
+                .forEach(expiredCronId => cronJobs[expiredCronId].stop());
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 };
 exports.default = cronService;

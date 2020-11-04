@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register './src/tests/**/*.ts'",
-    "build": "npm run compile-schemas && tsc -p tsconfig.json",
+    "build": "npm run compile:schemas && tsc -p tsconfig.json",
     "build:watch": "tsc -b --watch",
-    "compile-schemas": "json2ts -i ./src/schemas -o ./src/types",
+    "compile:schemas": "json2ts -i ./src/schemas -o ./src/types",
     "start": "npm run build && node -r dotenv/config ./src/index.js"
   },
   "keywords": [],
